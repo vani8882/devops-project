@@ -1,10 +1,21 @@
 const express = require('express');
-const app = express();
+const { sortTimetable, hasConflict } = require('./timetable');
 
-app.get('/', (req, res) => {
-  res.send('Hello DevOps!');
+const app = express();
+app.use(express.json());
+
+app.post('/optimize', (req, res) => {
+    const classes = req.body;
+
+    const conflict = hasConflict(classes);
+    const sorted = sortTimetable(classes);
+
+    res.json({
+        conflictDetected: conflict,
+        optimizedTimetable: sorted
+    });
 });
 
 app.listen(3000, () => {
-  console.log('App running on port 3000');
+    console.log('Server running on port 3000');
 });
